@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Love!</title>
+    <style>
+        /* Previous styles remain the same until countdown-box */
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(to bottom, #ff9a9e, #fecfef);
+            text-align: center;
+            color: #4B0082;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 20px;
+            background: linear-gradient(to right, #ffcccb, #fecfef);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 3.5em;
+            margin: 0;
+            color: #B22222;
+            font-family: 'Brush Script MT', cursive;
+            animation: glowText 2s ease-in-out infinite;
+        }
+
+        .love-letter {
+            background: rgba(255, 240, 245, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 20px auto;
+            font-size: 1.2em;
+            display: none;
+            box-shadow: 0 0 20px rgba(255, 182, 193, 0.5);
+            border: 2px solid #FFB6C1;
+            position: relative;
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .love-letter.show {
+            transform: scale(1);
+        }
+
+        .love-letter::before {
+            content: '💌';
+            font-size: 2em;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .message {
+            font-size: 1.8em;
+            margin: 20px 0;
+            color: #C71585;
+            animation: floatText 3s ease-in-out infinite;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 240, 245, 0.98);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            width: 90%;
+            max-width: 800px;
+            display: none;
+        }
+
+        .button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            margin: 10px;
+            background: linear-gradient(45deg, #FF69B4, #DA70D6);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(218, 112, 214, 0.4);
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(218, 112, 214, 0.6);
+        }
+
+        .heart {
+            color: #FF69B4;
+            font-size: 24px;
+            position: fixed;
+            animation: floatUp 4s linear;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .memory-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        #memoryTitle {
+            font-size: 1.8em;
+            color: #C71585;
+            margin-bottom: 20px;
+            font-family: 'Georgia', serif;
+        }
+
+        .memory-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            max-height: 60vh;
+            overflow: hidden;
+        }
+
+        .memory-photo {
+            max-width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .memory-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        #memoryPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 240, 245, 0.98);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Updated button styles for memory popup */
+        .memory-buttons .button {
+            min-width: 150px;
+            margin: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .memory-content {
+                max-height: 50vh;
+            }
+            
+            .memory-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .memory-buttons .button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            #memoryTitle {
+                font-size: 1.5em;
+            }
+        }
+
+        .quote-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote-text {
+            font-size: 1.2em;
+            color: #C71585;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        @keyframes glowText {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 105, 180, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(255, 105, 180, 0.8); }
+        }
+
+        @keyframes floatText {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) translateX(-50%);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(-50%);
+                opacity: 0;
+            }
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            background: linear-gradient(to right, #ffcccb, #fecfef);
+            color: #800000;
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Happy Birthday, My Love! 💝</h1>
+    </header>
+
+    <main>
+        <div class="message">
+            🎉 To the love of my life, wishing you a day as beautiful and special as you are! 🎂
+        </div>
+
+        <div class="quote-box">
+            <p class="quote-text" id="quote"></p>
+        </div>
+        <div class="music-controls">
+            <h2>Birthday Playlist 🎶</h2>
+            <audio id="birthdayMusic" controls>
+                <source id="audioSource" src="assets/music/One Direction – What make you beautiful.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <br>
+            <button class="button" onclick="prevSong()">⏮️ Previous</button>
+            <button class="button" onclick="toggleMusic()">⏯️ Play/Pause</button>
+            <button class="button" onclick="nextSong()">⏭️ Next</button>
+            <p id="currentSongTitle" style="font-size: 1.2em; color: #C71585; margin-top: 10px;"></p>
+        </div>
+
+        <div class="love-letter" id="loveLetter">
+            <p>My Dearest CHIKU 💝,</p>
+            <p>
+                Every day with you feels like a gift, but today is extra special because it's your birthday. 
+                Your smile lights up my world, your laugh is my favorite melody, and your love makes everything better.
+                You're not just my partner, you're my best friend, my soulmate, and my greatest adventure.
+            </p>
+            <p>
+                Thank you for filling my life with so much joy, love, and beautiful memories. 
+                I promise to keep making you smile, to hold you close, and to love you more with each passing day.
+            </p>
+            <p>Happy Birthday, my love! 🎂✨</p>
+            <p>Forever Yours,<br>ISHQ❤️</p>
+        </div>
+
+        <button class="button" onclick="showLoveLetter()">Open Love Letter 💌</button>
+        <button class="button" onclick="showQuestions()">Love Questions 💭</button>
+        <button class="button" onclick="showMemories()">Our Memories 📸</button>
+        <button class="button" onclick="createHearts()">Send Love 💖</button>
+        <button class="button" onclick="spamLove()">Spam 'I Love You' ❤️</button>
+
+        <div id="questionPopup" class="popup">
+            <h2>Love Questions</h2>
+            <p id="currentQuestion" style="font-size: 1.2em; color: #C71585;"></p>
+            <button class="button" onclick="nextQuestion()">Next Question ❤️</button>
+            <button class="button" onclick="closePopup('questionPopup')">Close ✨</button>
+        </div>
+
+        <div id="memoryPopup" class="popup">
+            <div class="memory-container">
+                <h2 id="memoryTitle">Our Special Moments</h2>
+                <div class="memory-content">
+                    <img id="memoryPhoto" class="memory-photo" src="assets/images/placeholder.png" alt="Our special memory">
+                </div>
+                <div class="memory-buttons">
+                    <button class="button" onclick="nextMemory()">Next Memory 💝</button>
+                    <button class="button" onclick="closePopup('memoryPopup')">Close ✨</button>
+                </div>
+            </div>
+        </div>
+        
+    <footer>
+        <p>With all my love, today and forever... ❤️</p>
+    </footer>
+
+    <script>
+        const playlist = [
+        { title: "Make You Mine", src: "assets/music/Make_You_Mine.mp3" },
+        { title: "Perfect - Ed Sheeran", src: "assets/music/Ed Sheeran - Perfect [www.jetune.ru].mp3" },
+        { title: "I like me better with you", src: "assets/music/Lauv - I Like Me Better.mp3" },
+        { title: "Love me Like You Do ", src: "assets/music/Ellie Goulding - Love Me Like You Do (Lyrics).mp3" }
+    ];
+
+    let currentSongIndex = 0;
+    const audioElement = document.getElementById('birthdayMusic');
+    const audioSource = document.getElementById('audioSource');
+    const songTitleElement = document.getElementById('currentSongTitle');
+
+    // Update the audio source and title
+    function loadSong(index) {
+        const song = playlist[index];
+        audioSource.src = song.src;
+        audioElement.load();
+        songTitleElement.textContent = `Now Playing: ${song.title}`;
+    }
+
+    // Play or Pause the music
+    function toggleMusic() {
+        if (audioElement.paused) {
+            audioElement.play();
+        } else {
+            audioElement.pause();
+        }
+    }
+
+    // Play the next song
+    function nextSong() {
+        currentSongIndex = (currentSongIndex + 1) % playlist.length;
+        loadSong(currentSongIndex);
+        audioElement.play();
+    }
+
+    // Play the previous song
+    function prevSong() {
+        currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+        loadSong(currentSongIndex);
+        audioElement.play();
+    }
+
+    // Initialize the first song
+    window.onload = function() {
+        loadSong(currentSongIndex);
+    };
+
+        const questions = [
+            "What's your favorite memory with me?",
+            "When did you first know you loved me?",
+            "What's our most romantic date?",
+            "What's your favorite thing about us?",
+            "What makes you smile the most about our relationship?",
+            "What's your dream destination with me?",
+            "What's your favorite photo of us?",   "If we could travel back in time together, where would we go?",
+            "What’s one dream of yours I can help you achieve?",
+            "What’s your favorite way to celebrate special moments with me?",
+            "What’s a memory of us that makes you laugh every time?",
+            "If you could freeze time with me in one moment, which would it be?",
+            "What’s your favorite thing about how we support each other?",
+            "If we could adopt a pet together, what would it be and why?",
+            "What’s one thing you wish I knew about how much you care for me?",
+            "What’s your favorite holiday we’ve spent together?",
+            "If you could write a letter to our future selves, what would it say?",
+            "What’s your favorite compliment I’ve given you?",
+            "What’s one thing you never want us to stop doing?",
+            "If we could spend a weekend anywhere in the world, where would it be?",
+            "What’s the best adventure we’ve been on together?",
+            "If you could cook one meal for me, what would it be?",
+            "What’s a goal we’ve achieved together that makes you proud?",
+            "If we had a theme song for our relationship, what would it be?",
+            "What’s the best gift you think I’ve ever received from you?",
+            "What’s one thing you want to teach me about you?",
+            "If you could relive our first date, what would you change?",
+            "What’s the most surprising thing about being with me?",
+            "What’s one way you feel I’ve helped you grow?",
+            "What’s a nickname you secretly want to call me?","What is one place you would love to visit together?",
+            "What do you love most about us?",
+            "What’s the most romantic thing we’ve ever done?",
+            "If you could relive one day with me, which would it be?",
+            "What song reminds you of me the most?",
+            "If we could have a dream dinner date anywhere, where would it be?",
+            "What’s your favorite thing I’ve ever said to you?",
+            "What’s one thing about me that always makes you smile?",
+            "If we could watch only one movie together forever, what would it be?",
+            "What’s your favorite picture of us?",
+            "What’s the most thoughtful gift I’ve given you?",
+            "If you could plan a perfect day with me, what would it look like?",
+            "What’s a little thing I do that you secretly adore?",
+            "If we were characters in a book, what would our story be called?",
+            "What’s your favorite meal we’ve shared together?",
+            "If you could describe our love in one word, what would it be?",
+            "What’s a new tradition you’d like us to start together?",
+            "What’s your favorite way to spend time together?",
+            "What’s one thing you want to achieve together this year?",
+            "If we could build a house anywhere, where would it be?",
+            "What’s your dream vacation destination for us?",
+            "What’s one thing you think makes our relationship unique?",
+            "What’s your favorite photo of me?",
+            "What’s one thing you think I should know about myself?",
+            "If you could relive one special moment with me, what would it be?",
+            "What’s your favorite thing about our conversations?",
+            "If you could write a love letter to me right now, what would it say?",
+            "What’s your favorite way to be surprised by me?",
+            "What's our best adventure together?",
+            "What's your favorite thing I do for you?",
+            "What's your favorite moment we've shared?",
+            "If we could have a superpower as a couple, what would it be?",
+            "What’s one skill you want us to learn together?",
+            "What’s the most beautiful view we’ve seen together?",
+            "If we could star in a movie together, what would it be about?",
+            "What’s one thing about me that inspires you?",
+            "What’s your favorite way I show love?",
+            "What’s one tradition you’d like us to pass down to our family?",
+            "What’s the best compliment you’ve ever received from me?",
+            "What’s your favorite time of year to spend together?",
+            "What’s the funniest inside joke we share?",
+            "If you could design the perfect date for us, what would it be?",
+            "What’s the most adventurous thing we’ve done together?",
+            "What’s a song lyric that reminds you of us?",
+            "What’s your favorite way to celebrate our love?",
+            "If we could be any fictional couple, who would we be?",
+            "What’s one thing you want to do on our next anniversary?",
+            "What’s your favorite love story besides ours?",
+            "What’s your favorite time of day to spend with me?",
+            "If you could give us a relationship motto, what would it be?",
+            "What’s the best thing about waking up with me?",
+            "What’s the most spontaneous thing we’ve ever done?",
+            "What’s your favorite story about us to tell others?",
+            "What’s one thing you’d like us to create together?",
+            "What’s the best piece of advice you’ve ever received about love?",
+            "If we could learn a new language together, which one would it be?",
+            "What’s your favorite memory of us dancing?",
+            "What’s your favorite surprise I’ve given you?",
+            "If we could take a road trip anywhere, where would we go?",
+            "What’s your favorite meal we’ve cooked together?",
+            "What’s a dream you have for our future?",
+            "What’s your favorite thing about our kisses?",
+            "What’s the most exciting thing about our relationship?",
+            "What’s one way I’ve made your life better?",
+            "What’s your favorite kind of adventure to go on with me?",
+            "If we could decorate our dream home, what would it look like?",
+            "What’s the most meaningful gift I’ve ever given you?",
+            "What’s your favorite way to relax with me?",
+            "If we could have dinner with any couple, real or fictional, who would it be?",
+            "What’s a memory of us you’ll never forget?"
+               
+        ];
+
+        const memories = [
+            { title: "Moments", photoUrl: "assets/images/cute momemts.jpeg" },
+            { title: "Our First Date", photoUrl: "assets/images/First date.jpeg" },
+            { title: "First Hand Hold", photoUrl: "assets/images/First hand hold.jpeg" },
+            { title: "Hugs", photoUrl: "assets/images/hugs.jpeg" },
+            { title: "Sunrise", photoUrl: "assets/images/sunrise.jpeg" },
+            { title: "The Beauty", photoUrl: "assets/images/the look.jpeg" },
+            { title: "kisses",photoUrl: "assets/images/Time spent.jpeg" }
+        ];
+
+        const quotes = [
+            "Every moment with you is pure magic ✨",
+            "You're my favorite hello and my hardest goodbye 💕",
+            "With you, every day feels like a dream 🌟",
+            "You make my heart smile 💝",
+            "You're my perfect match in every way 💑",
+            "Forever feels too short with you 💖"
+        ];
+
+        let currentQuestionIndex = 0;
+        let currentMemoryIndex = 0;
+        let currentQuoteIndex = 0;
+
+        function showLoveLetter() {
+            const letter = document.getElementById('loveLetter');
+            letter.style.display = 'block';
+            setTimeout(() => {
+                letter.classList.add('show');
+                createHearts();
+            }, 100);
+        }
+
+        function showQuestions() {
+            document.getElementById('questionPopup').style.display = 'block';
+            nextQuestion();
+        }
+
+        function showMemories() {
+            document.getElementById('memoryPopup').style.display = 'block';
+            showMemory();
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+        }
+
+        function nextQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('currentQuestion').textContent = question;
+            currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+        }
+
+        function showMemory() {
+            const memory = memories[currentMemoryIndex];
+            document.getElementById('memoryTitle').textContent = memory.title;
+            document.getElementById('memoryPhoto').src = memory.photoUrl;
+        }
+
+        function nextMemory() {
+            currentMemoryIndex = (currentMemoryIndex + 1) % memories.length;
+            showMemory();
+        }
+
+        function updateQuote() {
+            const quote = quotes[currentQuoteIndex];
+            document.getElementById('quote').textContent = quote;
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = '❤️';
+            heart.style.left = Math.random() * 100 + '%';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 4000);
+        }
+
+        function createHearts() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(createHeart, i * 300);
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            updateQuote();
+            setInterval(updateQuote, 5000); // Update quote every 5 seconds
+        };
+
+        function createLoveMessage() {
+        const message = document.createElement('div');
+        message.textContent = "I love you ❤️";
+        message.style.position = 'fixed';
+        message.style.fontSize = '24px';
+        message.style.color = '#FF1493';
+        message.style.fontFamily = "'Brush Script MT', cursive";
+        message.style.top = Math.random() * 100 + 'vh';
+        message.style.left = Math.random() * 100 + 'vw';
+        message.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+        message.style.zIndex = 1000;
+        message.style.opacity = 1;
+        message.style.transition = 'opacity 4s, transform 4s';
+
+        document.body.appendChild(message);
+
+        // Animate the message upwards and fade out
+        setTimeout(() => {
+            message.style.transform += ' translateY(-100px)';
+            message.style.opacity = 0;
+        }, 50);
+
+        // Remove the message after animation
+        setTimeout(() => {
+            message.remove();
+        }, 4000);
+    }
+
+    function spamLove() {
+        for (let i = 0; i < 500; i++) { // Number of messages
+            setTimeout(createLoveMessage, i * 300); // Interval between messages
+        }
+    }
+    </script>
+</body>
+</html>
